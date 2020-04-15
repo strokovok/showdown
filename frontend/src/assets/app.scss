@@ -1,0 +1,23 @@
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,600,700,900&display=swap');
+
+@font-face {
+  font-family: 'Oxygen';
+  src: local('Oxygen'), url('~@/assets/fonts/oxygen/oxygen.woff2') format('woff2'), url('~@/assets/fonts/oxygen/oxygen.woff') format('woff'), url('~@/assets/fonts/oxygen/oxygen.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Oxygen';
+  src: local('Oxygen Bold'), local('Oxygen-Bold'), url('~@/assets/fonts/oxygen/oxygenbold.woff2') format('woff2'), url('~@/assets/fonts/oxygen/oxygenbold.woff') format('woff'), url('~@/assets/fonts/oxygen/oxygenbold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+$col-background: #f7f7f7;
+$col-panel: #ebebeb;
+$col-text: #4d4d4d;
+
+
+html {
+  background: $col-background;
+}
