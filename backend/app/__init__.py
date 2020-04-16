@@ -1,8 +1,6 @@
 import os
 
 from flask import Flask
-import click
-from flask.cli import with_appcontext
 
 
 def create_app():
