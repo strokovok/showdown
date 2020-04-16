@@ -17,8 +17,8 @@ def init_db():
     db.create_all()
 
 
-@click.command("init-db")
+@click.command('init-db')
 @with_appcontext
 def init_db_command():
     init_db()
-    click.echo("Initialized the database.")
+    click.echo('Initialized the database.')
