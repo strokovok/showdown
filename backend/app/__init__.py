@@ -21,4 +21,7 @@ def create_app():
     from . import fill_db
     fill_db.init_app(app)
 
+    from .controllers import auth
+    app.register_blueprint(auth.bp)
+
     return app

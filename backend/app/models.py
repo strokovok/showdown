@@ -24,6 +24,13 @@ class User(db.Model):
     def check_password(self, value):
         return check_password_hash(self.password, value)
 
+    def to_json(self):
+        return {
+            "id": self.id,
+            "login": self.login,
+            "reg_time": str(self.reg_time)
+        }
+
 
 class Game(db.Model):
     id = db.Column(db.Integer, primary_key=True)
