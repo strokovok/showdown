@@ -22,8 +22,10 @@ def create_app():
     from . import fill_db
     fill_db.init_app(app)
 
-    from .controllers import auth, users
+    from .controllers import auth, users, games, bots
     app.register_blueprint(auth.bp)
     app.register_blueprint(users.bp)
+    app.register_blueprint(games.bp)
+    app.register_blueprint(bots.bp)
 
     return app

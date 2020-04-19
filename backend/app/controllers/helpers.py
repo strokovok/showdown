@@ -1,3 +1,6 @@
+import random
+import string
+
 from flask import g
 from flask import request
 from flask import session
@@ -45,3 +48,16 @@ def cur_user():
 def require_login():
     if cur_user() is None:
         ErrorMessage.LOGIN_REQUIRED.abort()
+
+
+def generate_token():
+    base = string.ascii_lowercase
+    base += string.ascii_uppercase
+    base += string.digits
+    return ''.join(random.choices(base, k=15))
+
+
+def require_game_management(game):
+    token = get_str_field(get_json_request(), 'manager_token', 1, 1000)
+    if not game.check_manager_token(token):
+        ErrorMessage.INCORRECT_MANAGER_TOKEN.abort()
