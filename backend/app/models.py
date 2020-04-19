@@ -19,11 +19,13 @@ def gen_json(obj, fields=None, rels=None, list_rels=None):
     if rels is not None:
         for name, opts in rels.items():
             if opts is not None:
-                res[name] = getattr(obj, name).to_json(**opts)
+                args = opts if isinstance(opts, dict) else dict()
+                res[name] = getattr(obj, name).to_json(**args)
     if list_rels is not None:
         for name, opts in list_rels.items():
             if opts is not None:
-                res[name] = [x.to_json(**opts) for x in getattr(obj, name)]
+                args = opts if isinstance(opts, dict) else dict()
+                res[name] = [x.to_json(**args) for x in getattr(obj, name)]
     return res
 
 

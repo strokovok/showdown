@@ -1,11 +1,10 @@
 from flask import Blueprint
-from flask import g
 from flask import session
 
 from app.database import db
 from app.models import User
 
-from .helpers import abort_with_message
+from .errors import ErrorMessage
 from .helpers import cur_user
 from .helpers import get_json_request
 from .helpers import get_str_field
@@ -21,7 +20,7 @@ def register():
     password = get_str_field(data, 'password', 1, 100)
     user = User.query.filter_by(login=login).first()
     if user is not None:
-        abort_with_message(f"User with login {login} already exists", 400)
+        ErrorMessage.USER_LOGIN_ALREADY_EXISTS.abort(login=login)
     user = User(login=login, password=password)
     db.session.add(user)
     db.session.commit()
@@ -37,9 +36,9 @@ def login():
     password = get_str_field(data, 'password', 1, 100)
     user = User.query.filter_by(login=login).first()
     if user is None:
-        abort_with_message(f"No such user with login '{login}'", 400)
+        ErrorMessage.NO_SUCH_USER_LOGIN.abort(login=login)
     if not user.check_password(password):
-        abort_with_message(f"Incorrect password", 400)
+        ErrorMessage.INCORRECT_PASSWORD.abort()
     session.clear()
     session["user_id"] = user.id
     return user.to_json()
