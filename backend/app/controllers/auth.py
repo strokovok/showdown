@@ -16,31 +16,40 @@ bp = Blueprint("auth", __name__, url_prefix="/auth")
 @bp.route("/register", methods=["POST"])
 def register():
     data = get_json_request()
+
     login = get_str_field(data, 'login', 1, 30)
-    password = get_str_field(data, 'password', 1, 100)
     user = User.query.filter_by(login=login).first()
     if user is not None:
         ErrorMessage.USER_LOGIN_ALREADY_EXISTS.abort(login=login)
+
+    password = get_str_field(data, 'password', 1, 100)
+
     user = User(login=login, password=password)
     db.session.add(user)
     db.session.commit()
+
     session.clear()
     session["user_id"] = user.id
+
     return user.to_json()
 
 
 @bp.route("/login", methods=["POST"])
 def login():
     data = get_json_request()
+
     login = get_str_field(data, 'login', 1, 30)
-    password = get_str_field(data, 'password', 1, 100)
     user = User.query.filter_by(login=login).first()
     if user is None:
         ErrorMessage.NO_SUCH_USER_LOGIN.abort(login=login)
+
+    password = get_str_field(data, 'password', 1, 100)
     if not user.check_password(password):
         ErrorMessage.INCORRECT_PASSWORD.abort()
+
     session.clear()
     session["user_id"] = user.id
+
     return user.to_json()
 
 
