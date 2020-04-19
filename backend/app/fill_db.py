@@ -31,7 +31,7 @@ def fill_db():
         game = games[j]
         match = Match(
             state=MatchState(random.randint(1, 4)),
-            data="jopa",
+            data='{"kek": true}',
             game=game,
             participants=random.sample(game.bots, k=2)
         )

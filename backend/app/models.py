@@ -1,10 +1,30 @@
 import enum
+import json
 
 from sqlalchemy.ext.hybrid import hybrid_property
 from werkzeug.security import check_password_hash
 from werkzeug.security import generate_password_hash
 
 from .database import db
+
+
+def gen_json(obj, fields=None, rels=None, list_rels=None):
+    res = dict()
+    if fields is not None:
+        for field in fields:
+            name, f = field, lambda x: x
+            if isinstance(field, tuple):
+                name, f = field
+            res[name] = f(getattr(obj, name))
+    if rels is not None:
+        for name, opts in rels.items():
+            if opts is not None:
+                res[name] = getattr(obj, name).to_json(**opts)
+    if list_rels is not None:
+        for name, opts in list_rels.items():
+            if opts is not None:
+                res[name] = [x.to_json(**opts) for x in getattr(obj, name)]
+    return res
 
 
 class User(db.Model):
@@ -24,12 +44,11 @@ class User(db.Model):
     def check_password(self, value):
         return check_password_hash(self.password, value)
 
-    def to_json(self):
-        return {
-            "id": self.id,
-            "login": self.login,
-            "reg_time": str(self.reg_time)
-        }
+    def to_json(self, bots=None):
+        return gen_json(self,
+            fields=["id", "login", ("reg_time", str)],
+            list_rels={"bots": bots}
+        )
 
 
 class Game(db.Model):
@@ -47,6 +66,12 @@ class Game(db.Model):
 
     def check_manager_token(self, value):
         return check_password_hash(self.manager_token, value)
+
+    def to_json(self, bots=None, matches=None):
+        return gen_json(self,
+            fields=["id", "name"],
+            list_rels={"bots": bots, "matches": matches}
+        )
 
 
 class Bot(db.Model):
@@ -74,15 +99,12 @@ class Bot(db.Model):
     def check_access_token(self, value):
         return check_password_hash(self.access_token, value)
 
-    def to_json(self):
-        return {
-            "id": self.id,
-            "name": self.name,
-            "creation_time": str(self.creation_time),
-            "rank": self.rank,
-            "owner_id": self.owner_id,
-            "game_id": self.game_id
-        }
+    def to_json(self, owner=None, game=None, matches=None):
+        return gen_json(self,
+            fields=["id", "name", ("creation_time", str), "rank", "owner_id", "game_id"],
+            rels={"owner": owner, "game": game},
+            list_rels={"matches": matches}
+        )
 
 
 bots_matches = db.Table('bots_matches',
@@ -103,7 +125,7 @@ class Match(db.Model):
     start_time = db.Column(db.DateTime, nullable=True)
     end_time = db.Column(db.DateTime, nullable=True)
     state = db.Column(db.Enum(MatchState), nullable=False)
-    data = db.Column(db.String, nullable=False)
+    data = db.Column(db.String, nullable=False, server_default="{}")
 
     game_id = db.Column(db.ForeignKey(Game.id), nullable=False)
     game = db.relationship(Game, lazy=False, uselist=False, backref=db.backref('matches', lazy=True, uselist=True))
@@ -114,3 +136,10 @@ class Match(db.Model):
         lazy=True, uselist=True,
         backref=db.backref('matches', lazy=True, uselist=True)
     )
+
+    def to_json(self, game=None, participants=None):
+        return gen_json(self,
+            fields=["id", ("start_time", str), ("end_time", str), ("state", lambda s: s.value), ("data", json.loads), "game_id"],
+            rels={"game": game},
+            list_rels={"participants": participants}
+        )
