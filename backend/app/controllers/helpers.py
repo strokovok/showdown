@@ -21,7 +21,7 @@ def get_field(data, field, types):
     if type(val) not in types:
         ErrorMessage.INVALID_FIELD_TYPE.abort(
             field=field,
-            expected=' or '.join([type(t()).__name__ for t in types])
+            expected=' or '.join([type(t()).__name__ for t in types]),
             got=type(val).__name__
         )
     return val
