@@ -74,6 +74,16 @@ class Bot(db.Model):
     def check_access_token(self, value):
         return check_password_hash(self.access_token, value)
 
+    def to_json(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "creation_time": str(self.creation_time),
+            "rank": self.rank,
+            "owner_id": self.owner_id,
+            "game_id": self.game_id
+        }
+
 
 bots_matches = db.Table('bots_matches',
     db.Column('bot_id', db.Integer, db.ForeignKey('bot.id'), primary_key=True),

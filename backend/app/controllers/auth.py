@@ -7,10 +7,8 @@ from app.models import User
 
 from .helpers import abort_with_message
 from .helpers import cur_user
-from .helpers import get_field
 from .helpers import get_json_request
 from .helpers import get_str_field
-from .helpers import require_login
 
 
 bp = Blueprint("auth", __name__, url_prefix="/auth")
