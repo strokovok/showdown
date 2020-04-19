@@ -22,4 +22,4 @@ def get_user(id):
     user = User.query.get(id)
     if user is None:
         ErrorMessage.NO_SUCH_USER_ID.abort(id=id)
-    return user.to_json(bots=True)
+    return user.to_json(bots={"game":True})
