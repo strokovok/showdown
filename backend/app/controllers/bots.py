@@ -4,16 +4,16 @@ from flask import session
 from app.database import db
 from app.models import Bot
 
-from .errors import ErrorMessage
-from .getters import get_bot
-from .getters import get_game
-from .helpers import cur_user
-from .helpers import generate_token
-from .helpers import get_field
-from .helpers import get_json_request
-from .helpers import get_str_field
-from .helpers import require_game_management
-from .helpers import require_login
+from .utils.errors import ErrorMessage
+from .utils.getters import get_bot
+from .utils.getters import get_game
+from .utils.helpers import cur_user
+from .utils.helpers import generate_token
+from .utils.helpers import get_field
+from .utils.helpers import get_json_request
+from .utils.helpers import get_str_field
+from .utils.helpers import require_game_management
+from .utils.helpers import require_login
 
 
 bp = Blueprint("bots", __name__, url_prefix="/bots")
@@ -40,7 +40,7 @@ def create_bot():
 
 
 @bp.route("/<int:id>", methods=["GET"])
-def get_bot(id):
+def get_bot_route(id):
     return get_bot(id=id).to_json(owner=True, game=True)
 
 
@@ -59,7 +59,7 @@ def renew_bot_token(id):
 
     token = generate_token()
     bot.access_token = token
-    db.commit()
+    db.session.commit()
 
     return {
         **(bot.to_json(owner=True, game=True)),

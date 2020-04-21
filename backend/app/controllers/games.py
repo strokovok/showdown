@@ -1,7 +1,9 @@
 from flask import Blueprint
 from flask import session
 
-from .getters import get_game
+from app.models import Game
+
+from .utils.getters import get_game
 
 
 bp = Blueprint("games", __name__, url_prefix="/games")
@@ -15,7 +17,7 @@ def get_games_list():
 
 
 @bp.route("/<int:id>", methods=["GET"])
-def get_game(id):
+def get_game_route(id):
     return get_game(id=id).to_json()
 
 
