@@ -51,12 +51,11 @@ def require_game_management():
         "properties": {
             "game": {
                 "type": "object",
-                    "properties": {
-                        "id": {"type": "integer"},
-                        "manager_token": {"type": "string"}
-                    },
-                    "required": ["id", "manager_token"]
-                }
+                "properties": {
+                    "id": {"type": "integer"},
+                    "manager_token": {"type": "string"}
+                },
+                "required": ["id", "manager_token"]
             }
         },
         "required": ["game"]
