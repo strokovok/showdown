@@ -1,5 +1,4 @@
 from flask import Blueprint
-from flask import session
 
 from app.models import Game
 

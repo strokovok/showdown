@@ -1,40 +1,29 @@
 import random
 import string
+import jsonschema
 
 from flask import g
 from flask import request
 from flask import session
 
-from .getters import get_user
 from .errors import ErrorMessage
+from .getters import get_game
+from .getters import get_user
 
 
-def get_json_request():
-    data = request.get_json(force=True)
-    if data is None:
-        ErrorMessage.INVALID_JSON.abort()
-    return data
+def get_json_request(schema=None):
+    if g.get("json_request", None) is None:
+        g.json_request = request.get_json(force=True)
+        if g.json_request is None:
+            ErrorMessage.INVALID_JSON.abort()
 
+    if schema is not None:
+        try:
+            jsonschema.validate(g.json_request, schema)
+        except jsonschema.exceptions.ValidationError as e:
+            ErrorMessage.INVALID_JSON_STRUCTURE.abort(message=e.message)
 
-def get_field(data, field, types):
-    if field not in data:
-        ErrorMessage.MISSING_FIELD.abort(field=field)
-    val = data[field]
-    if type(val) not in types:
-        ErrorMessage.INVALID_FIELD_TYPE.abort(
-            field=field,
-            expected=' or '.join([type(t()).__name__ for t in types]),
-            got=type(val).__name__
-        )
-    return val
-
-
-def get_str_field(data, field, mn, mx):
-    val = get_field(data, field, [str])
-    l = len(val)
-    if l < mn or l > mx:
-        ErrorMessage.INVALID_FIELD_LENGTH.abort(field=field, mn=mn, mx=mx, l=l)
-    return val
+    return g.json_request
 
 
 def cur_user():
@@ -56,7 +45,25 @@ def generate_token():
     return ''.join(random.choices(base, k=15))
 
 
-def require_game_management(game):
-    token = get_str_field(get_json_request(), 'manager_token', 1, 1000)
+def require_game_management():
+    schema = {
+        "type": "object",
+        "properties": {
+            "game": {
+                "type": "object",
+                    "properties": {
+                        "id": {"type": "integer"},
+                        "manager_token": {"type": "string"}
+                    },
+                    "required": ["id", "manager_token"]
+                }
+            }
+        },
+        "required": ["game"]
+    }
+    req = get_json_request(schema)
+    game_id, token = req["game"]["id"], req["game"]["manager_token"]
+
+    game = get_game(id=id)
     if not game.check_manager_token(token):
         ErrorMessage.INCORRECT_MANAGER_TOKEN.abort()

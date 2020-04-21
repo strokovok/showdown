@@ -7,10 +7,8 @@ from flask import make_response
 class ErrorMessage(enum.Enum):
 
     # Parsing
-    INVALID_JSON = (101, "Invalid JSON data.", 400)
-    MISSING_FIELD = (102, "Missing field '{field}'.", 400)
-    INVALID_FIELD_TYPE = (103, "Invalid type of field '{field}'. Expected: {expected}. Got: {got}.", 400)
-    INVALID_FIELD_LENGTH = (104, "Invalid length of field '{field}'. Allowed range is [{mn}; {mx}]. Got {l}.", 400)
+    INVALID_JSON = (101, "Invalid JSON.", 400)
+    INVALID_JSON_STRUCTURE = (102, "Invalid JSON structure: {message}.", 400)
 
     # Auth
     LOGIN_REQUIRED = (201, "Login required.", 401)
@@ -25,9 +23,15 @@ class ErrorMessage(enum.Enum):
     INCORRECT_MANAGER_TOKEN = (402, "Incorrect manager token.", 401)
 
     # Bot
-    NO_SUCH_BOT = (501, "No such bot with params {params}", 404)
+    NO_SUCH_BOT = (501, "No such bot with params {params}.", 404)
     BOT_NAME_ALREADY_EXISTS = (502, "Bot with name '{name}' already exists.", 400)
     NOT_YOUR_BOT = (503, "Bot with id '{id}' is not yours!", 401)
+    WRONG_BOT_GAME = (504, "Bot with id '{bot_id}' does not belong to game with id '{game_id}'.", 400)
+
+    # Match
+    NO_SUCH_MATCH = (601, "No such match with params {params}.", 404)
+    INVALID_MATCH_STATE = (602, "Invalid match state '{state}.'", 400)
+    WRONG_MATCH_GAME = (603, "Match with id '{match_id}' does not belong to game with id '{game_id}'.", 400)
 
 
     def abort(self, **kwargs):

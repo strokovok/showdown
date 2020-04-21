@@ -8,22 +8,29 @@ from .utils.errors import ErrorMessage
 from .utils.getters import get_user
 from .utils.helpers import cur_user
 from .utils.helpers import get_json_request
-from .utils.helpers import get_str_field
 
 
 bp = Blueprint("auth", __name__, url_prefix="/auth")
 
 
+auth_schema = {
+    "type": "object",
+    "properties": {
+        "login": {"type": "string", "minLength": 1, "maxLength": 30},
+        "password": {"type": "string", "minLength": 1, "maxLength": 100},
+    },
+    "required": ["login", "password"]
+}
+
+
 @bp.route("/register", methods=["POST"])
 def register():
-    data = get_json_request()
+    req = get_json_request(auth_schema)
+    login, password = req["login"], req["password"]
 
-    login = get_str_field(data, 'login', 1, 30)
     user = get_user(login=login, fail=False)
     if user is not None:
         ErrorMessage.USER_LOGIN_ALREADY_EXISTS.abort(login=login)
-
-    password = get_str_field(data, 'password', 1, 100)
 
     user = User(login=login, password=password)
     db.session.add(user)
@@ -37,12 +44,10 @@ def register():
 
 @bp.route("/login", methods=["POST"])
 def login():
-    data = get_json_request()
+    req = get_json_request(auth_schema)
+    login, password = req["login"], req["password"]
 
-    login = get_str_field(data, 'login', 1, 30)
     user = get_user(login=login)
-
-    password = get_str_field(data, 'password', 1, 100)
     if not user.check_password(password):
         ErrorMessage.INCORRECT_PASSWORD.abort()
 

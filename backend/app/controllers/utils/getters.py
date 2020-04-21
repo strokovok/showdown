@@ -23,3 +23,6 @@ def get_game(fail=True, **params):
 
 def get_bot(fail=True, **params):
     return get_entity(Bot, params, ErrorMessage.NO_SUCH_BOT, fail)
+
+def get_match(fail=True, **params):
+    return get_entity(Bot, params, ErrorMessage.NO_SUCH_MATCH, fail)

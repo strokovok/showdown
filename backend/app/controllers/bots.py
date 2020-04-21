@@ -1,5 +1,4 @@
 from flask import Blueprint
-from flask import session
 
 from app.database import db
 from app.models import Bot
@@ -9,9 +8,7 @@ from .utils.getters import get_bot
 from .utils.getters import get_game
 from .utils.helpers import cur_user
 from .utils.helpers import generate_token
-from .utils.helpers import get_field
 from .utils.helpers import get_json_request
-from .utils.helpers import get_str_field
 from .utils.helpers import require_game_management
 from .utils.helpers import require_login
 
@@ -22,14 +19,22 @@ bp = Blueprint("bots", __name__, url_prefix="/bots")
 @bp.route("/create", methods=["POST"])
 def create_bot():
     require_login()
-    data = get_json_request()
 
-    name = get_str_field(data, "name", 1, 30)
+    schema = {
+        "type": "object",
+        "properties": {
+            "name": {"type": "string", "minLength": 1, "maxLength": 30},
+            "game_id": {"type": "integer"},
+        },
+        "required": ["name", "game_id"]
+    }
+    req = get_json_request(schema)
+    name, game_id = req["name"], req["game_id"]
+
     bot = get_bot(name=name, fail=False)
     if bot is not None:
         ErrorMessage.BOT_NAME_ALREADY_EXISTS.abort(name=name)
 
-    game_id = get_field(data, "game_id", [int])
     game = get_game(id=game_id)
 
     bot = Bot(name=name, rank=0, owner=cur_user(), game=game, access_token=generate_token())
@@ -71,9 +76,22 @@ def renew_bot_token(id):
 
 @bp.route("/<int:id>/authorize", methods=["POST"])
 def authorize_bot(id):
+    require_game_management()
+
+    schema = {
+        "type": "object",
+        "properties": {
+            "access_token": {"type": "string"},
+        },
+        "required": ["access_token"]
+    }
+    req = get_json_request(schema)
+    token, game_id = req["access_token"], req["game"]["id"]
+
     bot = get_bot(id=id)
-    require_game_management(bot.game)
-    token = get_str_field(get_json_request(), 'access_token', 1, 1000)
+    if bot.game_id != game_id:
+        ErrorMessage.WRONG_BOT_GAME.abort(bot_id=bot.id, game_id=game_id)
+
     return {
         "success": bot.check_access_token(token),
         "bot": bot.to_json(owner=True)
