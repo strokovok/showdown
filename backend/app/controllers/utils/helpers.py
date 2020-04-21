@@ -5,8 +5,7 @@ from flask import g
 from flask import request
 from flask import session
 
-from app.models import User
-
+from .getters import get_user
 from .errors import ErrorMessage
 
 
@@ -40,8 +39,8 @@ def get_str_field(data, field, mn, mx):
 
 def cur_user():
     if g.get('user', None) is None:
-        user_id = session.get("user_id")
-        g.user = User.query.get(user_id) if user_id is not None else None
+        id = session.get("user_id")
+        g.user = get_user(id=id, fail=False) if id is not None else None
     return g.user
 
 

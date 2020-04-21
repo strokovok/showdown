@@ -15,24 +15,26 @@ class ErrorMessage(enum.Enum):
     # Auth
     LOGIN_REQUIRED = (201, "Login required.", 401)
     INCORRECT_PASSWORD = (202, "Incorrect password.", 400)
-    USER_LOGIN_ALREADY_EXISTS = (203, "User with login '{login}' already exists.'", 400)
 
     # User
-    NO_SUCH_USER_LOGIN = (301, "No such user with login '{login}.'", 404)
-    NO_SUCH_USER_ID = (302, "No such user with id '{id}'.", 404)
+    NO_SUCH_USER = (301, "No such user with '{params}'.", 404)
+    USER_LOGIN_ALREADY_EXISTS = (302, "User with login '{login}' already exists.'", 400)
 
     # Game
-    NO_SUCH_GAME_ID = (401, "No such game with id '{id}'.", 404)
-    INCORRECT_MANAGER_TOKEN = (402, "Incorrect manager token.", 400)
+    NO_SUCH_GAME = (401, "No such game with '{params}'.", 404)
+    INCORRECT_MANAGER_TOKEN = (402, "Incorrect manager token.", 401)
 
     # Bot
-    BOT_NAME_ALREADY_EXISTS = (501, "Bot with name '{name} already exists.'", 400)
-    NO_SUCH_BOT_ID = (502, "No such bot with id '{id}.'", 404)
+    NO_SUCH_BOT = (501, "No such bot with '{params}'", 404)
+    BOT_NAME_ALREADY_EXISTS = (502, "Bot with name '{name} already exists.'", 400)
     NOT_YOUR_BOT = (503, "Bot with id '{id}' is not yours!", 401)
 
 
     def abort(self, **kwargs):
         abort(make_response({
-            "error_code": self.value[0],
-            "error_message": self.value[1].format(**kwargs)
+            "error": {
+                "code": self.value[0],
+                "message": self.value[1].format(**kwargs),
+                "details": kwargs
+            }
         }, self.value[2]))

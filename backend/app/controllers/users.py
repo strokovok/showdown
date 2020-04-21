@@ -1,10 +1,8 @@
 from flask import Blueprint
 from flask import session
 
-from app.database import db
-from app.models import User
-
 from .errors import ErrorMessage
+from .getters import get_user
 
 
 bp = Blueprint("users", __name__, url_prefix="/users")
@@ -19,7 +17,4 @@ def get_users_list():
 
 @bp.route("/<int:id>", methods=["GET"])
 def get_user(id):
-    user = User.query.get(id)
-    if user is None:
-        ErrorMessage.NO_SUCH_USER_ID.abort(id=id)
-    return user.to_json(bots={"game":True})
+    return get_user(id=id).to_json(bots={"game":True})

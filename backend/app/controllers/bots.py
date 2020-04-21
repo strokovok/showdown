@@ -5,6 +5,8 @@ from app.database import db
 from app.models import Bot
 
 from .errors import ErrorMessage
+from .getters import get_bot
+from .getters import get_game
 from .helpers import cur_user
 from .helpers import generate_token
 from .helpers import get_field
@@ -23,14 +25,12 @@ def create_bot():
     data = get_json_request()
 
     name = get_str_field(data, "name", 1, 30)
-    bot = Bot.query.filter_by(name=name).first()
+    bot = get_bot(name=name, fail=False)
     if bot is not None:
         ErrorMessage.BOT_NAME_ALREADY_EXISTS.abort(name=name)
 
     game_id = get_field(data, "game_id", [int])
-    game = Game.query.get(id)
-    if game is None:
-        ErrorMessage.NO_SUCH_GAME_ID.abort(id=id)
+    game = get_game(id=game_id)
 
     bot = Bot(name=name, rank=0, owner=cur_user(), game=game, access_token=generate_token())
     db.session.add(bot)
@@ -39,27 +39,20 @@ def create_bot():
     return bot.to_json(owner=True, game=True)
 
 
-def _get_bot(id):
-    bot = Bot.query.get(id)
-    if bot is None:
-        ErrorMessage.NO_SUCH_BOT_ID.abort(id=id)
-    return bot
-
-
 @bp.route("/<int:id>", methods=["GET"])
 def get_bot(id):
-    return _get_bot(id).to_json(owner=True, game=True)
+    return get_bot(id=id).to_json(owner=True, game=True)
 
 
 @bp.route("/<int:id>/matches", methods=["GET"])
 def get_bot_matches(id):
-    return _get_bot(id).to_json(owner=True, game=True, matches={"participants":{"owner":True}})
+    return get_bot(id=id).to_json(owner=True, game=True, matches={"participants":{"owner":True}})
 
 
 @bp.route("/<int:id>/renew_token", methods=["GET"])
 def renew_bot_token(id):
     require_login()
-    bot = _get_bot(id)
+    bot = get_bot(id=id)
 
     if bot.owner_id != cur_user().id:
         ErrorMessage.NOT_YOUR_BOT.abort(id=id)
@@ -78,7 +71,7 @@ def renew_bot_token(id):
 
 @bp.route("/<int:id>/authorize", methods=["POST"])
 def authorize_bot(id):
-    bot = _get_bot(id)
+    bot = get_bot(id=id)
     require_game_management(bot.game)
     token = get_str_field(get_json_request(), 'access_token', 1, 1000)
     return {

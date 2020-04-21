@@ -4,10 +4,11 @@ from flask import session
 from app.database import db
 from app.models import User
 
-from .errors import ErrorMessage
-from .helpers import cur_user
-from .helpers import get_json_request
-from .helpers import get_str_field
+from .utils.errors import ErrorMessage
+from .utils.getters import get_user
+from .utils.helpers import cur_user
+from .utils.helpers import get_json_request
+from .utils.helpers import get_str_field
 
 
 bp = Blueprint("auth", __name__, url_prefix="/auth")
@@ -18,7 +19,7 @@ def register():
     data = get_json_request()
 
     login = get_str_field(data, 'login', 1, 30)
-    user = User.query.filter_by(login=login).first()
+    user = get_user(login=login, fail=False)
     if user is not None:
         ErrorMessage.USER_LOGIN_ALREADY_EXISTS.abort(login=login)
 
@@ -39,9 +40,7 @@ def login():
     data = get_json_request()
 
     login = get_str_field(data, 'login', 1, 30)
-    user = User.query.filter_by(login=login).first()
-    if user is None:
-        ErrorMessage.NO_SUCH_USER_LOGIN.abort(login=login)
+    user = get_user(login=login)
 
     password = get_str_field(data, 'password', 1, 100)
     if not user.check_password(password):
