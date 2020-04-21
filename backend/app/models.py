@@ -15,7 +15,8 @@ def gen_json(obj, fields=None, rels=None, list_rels=None):
             name, f = field, lambda x: x
             if isinstance(field, tuple):
                 name, f = field
-            res[name] = f(getattr(obj, name))
+            if f is not None:
+                res[name] = f(getattr(obj, name))
     if rels is not None:
         for name, opts in rels.items():
             if opts is not None:
@@ -124,9 +125,11 @@ class MatchState(enum.Enum):
 
 class Match(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    creation_time = db.Column(db.DateTime, nullable=False, server_default=db.func.current_timestamp())
     start_time = db.Column(db.DateTime, nullable=True)
     end_time = db.Column(db.DateTime, nullable=True)
     state = db.Column(db.Enum(MatchState), nullable=False)
+    results = db.Column(db.String, nullable=False, server_default="{}")
     data = db.Column(db.String, nullable=False, server_default="{}")
 
     game_id = db.Column(db.ForeignKey(Game.id), nullable=False)
@@ -139,9 +142,18 @@ class Match(db.Model):
         backref=db.backref('matches', lazy=True, uselist=True)
     )
 
-    def to_json(self, game=None, participants=None):
+    def to_json(self, data=None, game=None, participants=None):
         return gen_json(self,
-            fields=["id", ("start_time", str), ("end_time", str), ("state", lambda s: s.value), ("data", json.loads), "game_id"],
+            fields=[
+                "id",
+                ("creation_time", str),
+                ("start_time", str),
+                ("end_time", str),
+                ("state", lambda s: s.value),
+                ("results", json.loads),
+                ("data", json.loads if data else None),
+                "game_id"
+            ],
             rels={"game": game},
             list_rels={"participants": participants}
         )
