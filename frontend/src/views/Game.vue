@@ -11,6 +11,7 @@
             <router-link :to="`/games/${game_id}/`" class="navigation-link-exact">Детали</router-link>
             <router-link :to="`/games/${game_id}/matches`" class="navigation-link-exact">Матчи</router-link>
             <router-link :to="`/games/${game_id}/bots`" class="navigation-link-exact">Боты</router-link>
+            <router-link :to="`/games/${game_id}/create_bot`" class="navigation-link-exact">Создать бота</router-link>
         </div>
         <router-view/>
     </div>
@@ -58,12 +59,15 @@
 
 <script>
     export default {
+        mounted() {
+            this.$store.dispatch('reload_game', this.game_id);
+        },
         computed: {
             game_id() {
                 return this.$route.params.game_id;
             },
             game() {
-                return this.$store.getters.games_short[this.game_id];
+                return this.$store.getters.get_game(this.game_id);
             }
         }
     }

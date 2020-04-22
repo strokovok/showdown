@@ -40,6 +40,20 @@ html {
     box-sizing: border-box;
 }
 
+.content-panels-row {
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+    .content-panel {
+        width: unset;
+        flex-shrink: 0;
+        margin-right: 20px;
+        &:last-child {
+            margin-right: 0;
+        }
+    }
+}
+
 .navigation-link {
     margin-left: 60px;
     cursor: pointer;
@@ -71,4 +85,31 @@ html {
         color: $col-active;
         border-bottom-color: $col-active;
     }
+}
+
+.jump-link {
+    text-decoration: none;
+    color: $col-text;
+    &:hover {
+        color: $col-active;
+        transform: scale(1.05);
+    }
+    &:active {
+        transform: scale(0.95);
+    }
+    transition: all .3s ease;
+}
+
+.panel-link {
+    &:hover {
+        transform: scale(1.1);
+        background: mix($col-panel, $col-active, 70%);
+    }
+    &:active {
+        transform: scale(0.9);
+    }
+    transition: all .3s ease;
+    cursor: pointer;
+    text-decoration: none;
+    color: $col-text;
 }

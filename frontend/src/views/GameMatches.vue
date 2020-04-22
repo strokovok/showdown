@@ -1,6 +1,6 @@
 <template>
     <div class="content-panel-container">
-        <MatchPreview v-for="match in matches" :match="match"></MatchPreview>
+        <MatchPreview v-for="match in matches" :match="match" :key="match.id"></MatchPreview>
     </div>
 </template>
 
@@ -9,20 +9,18 @@
 </style>
 
 <script>
-    import MatchPreview from "@/components/MatchPreview";
+    import MatchPreview from "@/components/MatchPreview.vue";
 
     export default {
         mounted() {
-            this.$store.dispatch("reload_game_matches", this.$route.params.game_id);
+            this.$store.dispatch('reload_game_matches', this.game_id);
         },
         computed: {
-            game() {
-                return this.$store.getters.games_matches[this.$route.params.game_id];
+            game_id() {
+                return this.$route.params.game_id;
             },
             matches() {
-                if (this.game === undefined)
-                    return [];
-                return this.game.matches;
+                return this.$store.getters.get_game_matches(this.game_id) || [];
             }
         },
         components: {

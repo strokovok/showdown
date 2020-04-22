@@ -1,7 +1,7 @@
 <template>
     <div class="content-panel match-preview">
         <div class="participant participant-left">
-            <router-link :to="`/bot/${left.id}`" class="bot jump-link">
+            <router-link :to="`/bots/${left.id}`" class="bot jump-link">
                 <img class="bot-logo" src="/bot.png">
                 <div class="bot-name">{{left.name}}</div>
             </router-link>
@@ -14,7 +14,7 @@
             Перейти к матчу
         </router-link>
         <div class="participant participant-right">
-            <router-link :to="`/bot/${right.id}`" class="bot jump-link">
+            <router-link :to="`/bots/${right.id}`" class="bot jump-link">
                 <div class="bot-name">{{right.name}}</div>
                 <img class="bot-logo" src="/bot.png">
             </router-link>

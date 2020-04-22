@@ -1,7 +1,7 @@
 <template>
     <div class="content-panel-container">
         <div class="content-panel">
-            Здесь будет детальная информация об игре.
+            Здесь будет создание бота.
         </div>
     </div>
 </template>

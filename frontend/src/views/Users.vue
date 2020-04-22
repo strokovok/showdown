@@ -1,16 +1,16 @@
 <template>
-    <div class="games">
-        <card-link v-for="game in $store.getters.all_games"
-                   img="/game.png"
-                   :title="game.name"
-                   :to="`/games/${game.id}`"
-                   :key="game.id"
-                   class="game"/>
+    <div class="users">
+        <card-link v-for="user in $store.getters.all_users"
+                   img="/user.png"
+                   :title="user.login"
+                   :to="`/users/${user.id}`"
+                   :key="user.id"
+                   class="user"/>
     </div>
 </template>
 
 <style lang="scss" scoped>
-    .games {
+    .users {
         width: 100%;
         display: flex;
         align-items: center;
@@ -18,7 +18,7 @@
         flex-wrap: wrap;
     }
 
-    .game {
+    .user {
         width: 200px;
         height: 200px;
         margin: 10px;
@@ -30,7 +30,7 @@
 
     export default {
         mounted() {
-            this.$store.dispatch('reload_all_games');
+            this.$store.dispatch('reload_all_users');
         },
         components: {
             CardLink

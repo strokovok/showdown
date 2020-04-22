@@ -35,8 +35,18 @@ export default new Router({
                     path: "matches",
                     name: "game_matches",
                     component: () => import('./views/GameMatches.vue')
+                },
+                {
+                    path: "create_bot",
+                    name: "create_bot",
+                    component: () => import('./views/GameCreateBot.vue')
                 }
             ]
-        }
+        },
+        {
+            path: '/users',
+            name: 'users',
+            component: () => import('./views/Users.vue')
+        },
     ]
 })
