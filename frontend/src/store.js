@@ -15,6 +15,8 @@ export default new Vuex.Store({
         games_bots: {},
 
         all_users: [],
+        users: {},
+        users_bots: {}
     },
     getters: {
         all_games: state => state.all_games,
@@ -23,6 +25,8 @@ export default new Vuex.Store({
         get_game_bots: state => id => state.games_bots[id],
 
         all_users: state => state.all_users,
+        get_user: state => id => state.users[id],
+        get_user_bots: state => id => state.users_bots[id],
     },
     mutations: {
         set_all_games(state, all_games) {
@@ -40,6 +44,12 @@ export default new Vuex.Store({
 
         set_all_users(state, all_users) {
             state.all_users = all_users;
+        },
+        set_user(state, { id, user }) {
+            Vue.set(state.users, id, user);
+        },
+        set_user_bots(state, { id, bots }) {
+            Vue.set(state.users_bots, id, bots);
         },
     },
     actions: {
@@ -67,6 +77,16 @@ export default new Vuex.Store({
         reload_all_users(context) {
             axios.get('/api/users').then(response => {
                 context.commit('set_all_users', response.data.users);
+            }).catch(err => console.log(err));
+        },
+        reload_user(context, id) {
+            axios.get(`/api/users/${id}`).then(response => {
+                context.commit('set_user', { id: id, user: response.data });
+            }).catch(err => console.log(err));
+        },
+        reload_user_bots(context, id) {
+            axios.get(`/api/bots?owner_id=${id}`).then(response => {
+                context.commit('set_user_bots', {id: id, bots: response.data.bots });
             }).catch(err => console.log(err));
         },
     }

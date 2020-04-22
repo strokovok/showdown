@@ -1,6 +1,6 @@
 <template>
     <div class="content-panel">
-
+        Добро пожаловать!
     </div>
 </template>
 
