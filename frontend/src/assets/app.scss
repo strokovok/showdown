@@ -42,7 +42,7 @@ html {
 
 .content-panels-row {
     display: flex;
-    align-items: stretch;
+    align-items: flex-start;
     width: 100%;
     .content-panel {
         width: unset;

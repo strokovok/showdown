@@ -1,6 +1,6 @@
 <template>
     <div class="content-panel-container">
-        <MatchPreview v-for="match in matches" :match="match" :key="match.id"></MatchPreview>
+        <MatchPreview v-for="match in matches" :match="match" :key="match.id" :show_game="false"></MatchPreview>
     </div>
 </template>
 

@@ -25,8 +25,8 @@
 
 <style lang="scss" scoped>
     .card {
-        width: 123.5px;
-        height: 123.5px;
+        width: 110px;
+        height: 110px;
         font-size: 14px;
     }
 

@@ -7,7 +7,7 @@
                 <div class="bot-short-descr">Здесь будет краткая информация.</div>
             </div>
         </div>
-        <MatchPreview v-for="match in matches" :match="match" :key="match.id"></MatchPreview>
+        <MatchPreview v-for="match in matches" :match="match" :key="match.id" :show_game="true" :prefer_left="bot.id"></MatchPreview>
     </div>
 </template>
 
