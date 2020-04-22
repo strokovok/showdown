@@ -21,7 +21,7 @@ from .utils.helpers import require_game_management
 from .utils.helpers import require_login
 
 
-bp = Blueprint("Matches", __name__, url_prefix="/matches")
+bp = Blueprint("Matches", __name__, url_prefix="/api/matches")
 
 
 @bp.route("/<int:id>", methods=["GET"])

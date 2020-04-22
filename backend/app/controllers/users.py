@@ -5,7 +5,7 @@ from app.models import User
 from .utils.getters import get_user
 
 
-bp = Blueprint("users", __name__, url_prefix="/users")
+bp = Blueprint("users", __name__, url_prefix="/api/users")
 
 
 @bp.route("/", methods=["GET"])

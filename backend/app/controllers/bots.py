@@ -13,7 +13,7 @@ from .utils.helpers import require_game_management
 from .utils.helpers import require_login
 
 
-bp = Blueprint("bots", __name__, url_prefix="/bots")
+bp = Blueprint("bots", __name__, url_prefix="/api/bots")
 
 
 @bp.route("/create", methods=["POST"])

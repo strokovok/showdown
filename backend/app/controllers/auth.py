@@ -10,7 +10,7 @@ from .utils.helpers import cur_user
 from .utils.helpers import get_json_request
 
 
-bp = Blueprint("auth", __name__, url_prefix="/auth")
+bp = Blueprint("auth", __name__, url_prefix="/api/auth")
 
 
 auth_schema = {

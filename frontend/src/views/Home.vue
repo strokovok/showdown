@@ -1,18 +1,18 @@
 <template>
-  <div class="home">
-    <!--<img alt="Vue logo" src="../assets/logo.png">-->
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+    <div class="content-panel">
+
+    </div>
 </template>
 
-<script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
+<style lang="scss" scoped>
+    .content-panel {
+        width: 100%;
+        height: 500px;
+        background: $col-panel;
+    }
+</style>
 
-export default {
-  name: 'home',
-  components: {
-    HelloWorld
-  }
-}
+<script>
+    export default {
+    }
 </script>

@@ -5,7 +5,7 @@ from app.models import Game
 from .utils.getters import get_game
 
 
-bp = Blueprint("games", __name__, url_prefix="/games")
+bp = Blueprint("games", __name__, url_prefix="/api/games")
 
 
 @bp.route("/", methods=["GET"])

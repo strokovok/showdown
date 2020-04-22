@@ -1,23 +1,74 @@
 @import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,600,700,900&display=swap');
 
 @font-face {
-  font-family: 'Oxygen';
-  src: local('Oxygen'), url('~@/assets/fonts/oxygen/oxygen.woff2') format('woff2'), url('~@/assets/fonts/oxygen/oxygen.woff') format('woff'), url('~@/assets/fonts/oxygen/oxygen.ttf') format('truetype');
-  font-weight: 400;
-  font-style: normal;
+    font-family: 'Oxygen';
+    src: local('Oxygen'), url('~@/assets/fonts/oxygen/oxygen.woff2') format('woff2'), url('~@/assets/fonts/oxygen/oxygen.woff') format('woff'), url('~@/assets/fonts/oxygen/oxygen.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
 }
+
 @font-face {
-  font-family: 'Oxygen';
-  src: local('Oxygen Bold'), local('Oxygen-Bold'), url('~@/assets/fonts/oxygen/oxygenbold.woff2') format('woff2'), url('~@/assets/fonts/oxygen/oxygenbold.woff') format('woff'), url('~@/assets/fonts/oxygen/oxygenbold.ttf') format('truetype');
-  font-weight: 700;
-  font-style: normal;
+    font-family: 'Oxygen';
+    src: local('Oxygen Bold'), local('Oxygen-Bold'), url('~@/assets/fonts/oxygen/oxygenbold.woff2') format('woff2'), url('~@/assets/fonts/oxygen/oxygenbold.woff') format('woff'), url('~@/assets/fonts/oxygen/oxygenbold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
 }
-
-$col-background: #f7f7f7;
-$col-panel: #ebebeb;
-$col-text: #4d4d4d;
-
 
 html {
-  background: $col-background;
+    background: $col-background;
+    font-family: 'Source Sans Pro', sans-serif;
+    color: $col-text;
+    font-size: 18px;
+}
+
+.content-panel-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.content-panel {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: $col-panel;
+    margin-bottom: 20px;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.navigation-link {
+    margin-left: 60px;
+    cursor: pointer;
+    padding-bottom: 5px;
+    border-bottom: 2px $col-background solid;
+    &:hover {
+        border-bottom-color: $col-text;
+        transform: scale(1.05);
+    }
+    &:active {
+        transform: scale(0.95);
+    }
+    transition: all .3s ease;
+    text-decoration: none;
+    color: $col-text;
+}
+
+.navigation-link-nonexact {
+    @extend .navigation-link;
+    &.router-link-active {
+        color: $col-active;
+        border-bottom-color: $col-active;
+    }
+}
+
+.navigation-link-exact {
+    @extend .navigation-link;
+    &.router-link-exact-active {
+        color: $col-active;
+        border-bottom-color: $col-active;
+    }
 }
