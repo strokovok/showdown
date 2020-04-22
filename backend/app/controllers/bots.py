@@ -1,4 +1,5 @@
 from flask import Blueprint
+from flask import request
 
 from app.database import db
 from app.models import Bot
@@ -14,6 +15,32 @@ from .utils.helpers import require_login
 
 
 bp = Blueprint("bots", __name__, url_prefix="/api/bots")
+
+
+@bp.route("/", methods=["GET"])
+def get_bots():
+    query = Bot.query
+
+    owner_id = request.args.get('owner_id', None, int)
+    if owner_id is not None:
+        query = query.filter_by(owner_id=owner_id)
+
+    game_id = request.args.get('game_id', None, int)
+    if game_id is not None:
+        query = query.filter_by(game_id=game_id)
+
+    match_id = request.args.get('match_id', None, int)
+    if match_id is not None:
+        query = query.filter(Bot.matches.any(id=match_id))
+
+    return {
+        "bots": [bot.to_json(owner=True, game=True) for bot in query.all()]
+    }
+
+
+@bp.route("/<int:id>", methods=["GET"])
+def get_bot_route(id):
+    return get_bot(id=id).to_json(owner=True, game=True)
 
 
 @bp.route("/create", methods=["POST"])
@@ -44,16 +71,6 @@ def create_bot():
     return bot.to_json(owner=True, game=True)
 
 
-@bp.route("/<int:id>", methods=["GET"])
-def get_bot_route(id):
-    return get_bot(id=id).to_json(owner=True, game=True)
-
-
-@bp.route("/<int:id>/matches", methods=["GET"])
-def get_bot_matches(id):
-    return get_bot(id=id).to_json(owner=True, game=True, matches={"participants":{"owner":True}})
-
-
 @bp.route("/<int:id>/renew_token", methods=["GET"])
 def renew_bot_token(id):
     require_login()
@@ -67,7 +84,7 @@ def renew_bot_token(id):
     db.session.commit()
 
     return {
-        **(bot.to_json(owner=True, game=True)),
+        "bot": bot.to_json(owner=True, game=True),
         "access_token": token
     }
 
@@ -76,7 +93,7 @@ def renew_bot_token(id):
 
 @bp.route("/<int:id>/authorize", methods=["POST"])
 def authorize_bot(id):
-    require_game_management()
+    game = require_game_management()
 
     schema = {
         "type": "object",
@@ -86,11 +103,11 @@ def authorize_bot(id):
         "required": ["access_token"]
     }
     req = get_json_request(schema)
-    token, game_id = req["access_token"], req["game"]["id"]
+    token = req["access_token"]
 
     bot = get_bot(id=id)
     if bot.game_id != game_id:
-        ErrorMessage.WRONG_BOT_GAME.abort(bot_id=bot.id, game_id=game_id)
+        ErrorMessage.WRONG_BOT_GAME.abort(bot_id=bot.id, game_id=game.id)
 
     return {
         "success": bot.check_access_token(token),

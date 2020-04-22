@@ -22,10 +22,11 @@ def create_app():
     from . import fill_db
     fill_db.init_app(app)
 
-    from .controllers import auth, users, games, bots
+    from .controllers import auth, users, games, bots, matches
     app.register_blueprint(auth.bp)
     app.register_blueprint(users.bp)
     app.register_blueprint(games.bp)
     app.register_blueprint(bots.bp)
+    app.register_blueprint(matches.bp)
 
     return app

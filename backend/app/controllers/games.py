@@ -18,13 +18,3 @@ def get_games_list():
 @bp.route("/<int:id>", methods=["GET"])
 def get_game_route(id):
     return get_game(id=id).to_json()
-
-
-@bp.route("/<int:id>/bots", methods=["GET"])
-def get_game_bots(id):
-    return get_game(id=id).to_json(bots={"owner":True})
-
-
-@bp.route("/<int:id>/matches", methods=["GET"])
-def get_game_matches(id):
-    return get_game(id=id).to_json(matches={"participants":{"owner": True}})

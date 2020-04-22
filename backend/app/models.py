@@ -2,6 +2,7 @@ import enum
 import json
 
 from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.orm import deferred
 from werkzeug.security import check_password_hash
 from werkzeug.security import generate_password_hash
 
@@ -130,7 +131,7 @@ class Match(db.Model):
     end_time = db.Column(db.DateTime, nullable=True)
     state = db.Column(db.Enum(MatchState), nullable=False)
     results = db.Column(db.String, nullable=False, server_default="{}")
-    data = db.Column(db.String, nullable=False, server_default="{}")
+    data = deferred(db.Column(db.String, nullable=False, server_default="{}"))
 
     game_id = db.Column(db.ForeignKey(Game.id), nullable=False)
     game = db.relationship(Game, lazy=False, uselist=False, backref=db.backref('matches', lazy=True, uselist=True))

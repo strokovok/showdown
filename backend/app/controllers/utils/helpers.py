@@ -66,3 +66,5 @@ def require_game_management():
     game = get_game(id=id)
     if not game.check_manager_token(token):
         ErrorMessage.INCORRECT_MANAGER_TOKEN.abort()
+
+    return game
