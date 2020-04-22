@@ -5,6 +5,7 @@
         <div class="sections">
             <router-link to="/games" class="navigation-link-nonexact">Соревнования</router-link>
             <router-link to="/users" class="navigation-link-nonexact">Пользователи</router-link>
+            <router-link to="/bots" class="navigation-link-nonexact">Боты</router-link>
             <router-link to="/profile" class="navigation-link-nonexact">Профиль</router-link>
             <router-link to="/logout" class="navigation-link-nonexact">Выйти</router-link>
 <!--            <div class="navigation-link-nonexact">Язык</div>-->

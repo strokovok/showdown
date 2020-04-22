@@ -12,6 +12,7 @@ export default new Router({
             name: 'home',
             component: () => import('./views/Home.vue')
         },
+
         {
             path: '/games',
             name: 'games',
@@ -43,6 +44,7 @@ export default new Router({
                 }
             ]
         },
+
         {
             path: '/users',
             name: 'users',
@@ -52,6 +54,17 @@ export default new Router({
             path: '/users/:user_id',
             name: 'user',
             component: () => import('./views/User.vue'),
-        }
+        },
+
+        {
+            path: '/bots',
+            name: 'bots',
+            component: () => import('./views/Bots.vue'),
+        },
+        {
+            path: '/bots/:bot_id',
+            name: 'bot',
+            component: () => import('./views/Bot.vue'),
+        },
     ]
 })

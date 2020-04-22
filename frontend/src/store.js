@@ -16,7 +16,11 @@ export default new Vuex.Store({
 
         all_users: [],
         users: {},
-        users_bots: {}
+        users_bots: {},
+
+        all_bots: [],
+        bots: {},
+        bots_matches: {},
     },
     getters: {
         all_games: state => state.all_games,
@@ -27,6 +31,10 @@ export default new Vuex.Store({
         all_users: state => state.all_users,
         get_user: state => id => state.users[id],
         get_user_bots: state => id => state.users_bots[id],
+
+        all_bots: state => state.all_bots,
+        get_bot: state => id => state.bots[id],
+        get_bot_matches: state => id => state.bots_matches[id],
     },
     mutations: {
         set_all_games(state, all_games) {
@@ -50,6 +58,16 @@ export default new Vuex.Store({
         },
         set_user_bots(state, { id, bots }) {
             Vue.set(state.users_bots, id, bots);
+        },
+
+        set_all_bots(state, all_bots) {
+            state.all_bots = all_bots;
+        },
+        set_bot(state, { id, bot }) {
+            Vue.set(state.bots, id, bot);
+        },
+        set_bot_matches(state, { id, matches }) {
+            Vue.set(state.bots_matches, id, matches);
         },
     },
     actions: {
@@ -87,6 +105,22 @@ export default new Vuex.Store({
         reload_user_bots(context, id) {
             axios.get(`/api/bots?owner_id=${id}`).then(response => {
                 context.commit('set_user_bots', {id: id, bots: response.data.bots });
+            }).catch(err => console.log(err));
+        },
+
+        reload_all_bots(context) {
+            axios.get('/api/bots').then(response => {
+                context.commit('set_all_bots', response.data.bots);
+            }).catch(err => console.log(err));
+        },
+        reload_bot(context, id) {
+            axios.get(`/api/bots/${id}`).then(response => {
+                context.commit('set_bot', { id: id, bot: response.data });
+            }).catch(err => console.log(err));
+        },
+        reload_bot_matches(context, id) {
+            axios.get(`/api/matches?bot_id=${id}`).then(response => {
+                context.commit('set_bot_matches', {id: id, matches: response.data.matches });
             }).catch(err => console.log(err));
         },
     }
