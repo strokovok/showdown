@@ -17,4 +17,4 @@ def get_users_list():
 
 @bp.route("/<int:id>", methods=["GET"])
 def get_user_route(id):
-    return get_user(id=id).to_json(bots={"game":True})
+    return get_user(id=id).to_json()

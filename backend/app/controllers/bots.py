@@ -64,11 +64,15 @@ def create_bot():
 
     game = get_game(id=game_id)
 
-    bot = Bot(name=name, rank=0, owner=cur_user(), game=game, access_token=generate_token())
+    token = generate_token()
+    bot = Bot(name=name, rank=0, owner=cur_user(), game=game, access_token=token)
     db.session.add(bot)
     db.session.commit()
 
-    return bot.to_json(owner=True, game=True)
+    return {
+        "bot": bot.to_json(owner=True, game=True),
+        "access_token": token
+    }
 
 
 @bp.route("/<int:id>/renew_token", methods=["GET"])
@@ -87,8 +91,6 @@ def renew_bot_token(id):
         "bot": bot.to_json(owner=True, game=True),
         "access_token": token
     }
-
-    return res
 
 
 @bp.route("/<int:id>/authorize", methods=["POST"])

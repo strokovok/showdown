@@ -13,9 +13,7 @@ def gen_json(obj, fields=None, rels=None, list_rels=None):
     res = dict()
     if fields is not None:
         for field in fields:
-            name, f = field, lambda x: x
-            if isinstance(field, tuple):
-                name, f = field
+            name, f = field if isinstance(field, tuple) else (field, lambda x: x)
             if f is not None:
                 res[name] = f(getattr(obj, name))
     if rels is not None:
