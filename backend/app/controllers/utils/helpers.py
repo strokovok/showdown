@@ -68,3 +68,13 @@ def require_game_management():
         ErrorMessage.INCORRECT_MANAGER_TOKEN.abort()
 
     return game
+
+
+def require_match_management(id):
+    game = require_game_management()
+
+    match = get_match(id=id)
+    if match.game_id != game.id:
+        ErrorMessage.WRONG_MATCH_GAME.abort(match_id=id, game_id=game.id)
+
+    return match
