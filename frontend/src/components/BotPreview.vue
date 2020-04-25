@@ -73,8 +73,8 @@
     export default {
         props: {
             bot: Object,
-            show_game: Boolean,
-            show_user: Boolean
+            show_game: { default: false },
+            show_user: { default: false }
         },
         components: {
             CardLink

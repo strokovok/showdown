@@ -7,12 +7,15 @@
                 <div class="bot-short-descr">Здесь будет краткая информация.</div>
             </div>
         </div>
-        <MatchPreview v-for="match in matches" :match="match" :key="match.id" :show_game="true" :prefer_left="bot.id"></MatchPreview>
+        <div class="subnav">
+            <router-link :to="`/bots/${bot_id}/`" class="navigation-link-exact">Детали</router-link>
+            <router-link :to="`/bots/${bot_id}/matches`" class="navigation-link-exact">Матчи</router-link>
+        </div>
+        <router-view/>
     </div>
 </template>
 
 <style lang="scss" scoped>
-
     .short-info-panel {
         flex-direction: row;
         align-items: center;
@@ -46,12 +49,9 @@
 </style>
 
 <script>
-    import MatchPreview from "@/components/MatchPreview.vue";
-
     export default {
         mounted() {
             this.$store.dispatch('reload_bot', this.bot_id);
-            this.$store.dispatch('reload_bot_matches', this.bot_id);
         },
         computed: {
             bot_id() {
@@ -59,13 +59,7 @@
             },
             bot() {
                 return this.$store.getters.get_bot(this.bot_id);
-            },
-            matches() {
-                return this.$store.getters.get_bot_matches(this.bot_id) || [];
             }
-        },
-        components: {
-            MatchPreview
         }
     }
 </script>

@@ -7,7 +7,12 @@
                 <div class="user-short-descr">Здесь будет краткая информация.</div>
             </div>
         </div>
-        <BotPreview v-for="bot in bots" :bot="bot" :key="bot.id" :show_game="true" :show_user="false"/>
+        <div class="subnav">
+            <router-link :to="`/users/${user_id}/`" class="navigation-link-exact">Детали</router-link>
+            <router-link :to="`/users/${user_id}/matches`" class="navigation-link-exact">Матчи</router-link>
+            <router-link :to="`/users/${user_id}/bots`" class="navigation-link-exact">Боты</router-link>
+        </div>
+        <router-view/>
     </div>
 </template>
 
@@ -46,12 +51,9 @@
 </style>
 
 <script>
-    import BotPreview from "@/components/BotPreview.vue";
-
     export default {
         mounted() {
             this.$store.dispatch('reload_user', this.user_id);
-            this.$store.dispatch('reload_user_bots', this.user_id);
         },
         computed: {
             user_id() {
@@ -59,13 +61,7 @@
             },
             user() {
                 return this.$store.getters.get_user(this.user_id);
-            },
-            bots() {
-                return this.$store.getters.get_user_bots(this.user_id) || [];
             }
-        },
-        components: {
-            BotPreview
         }
     }
 </script>

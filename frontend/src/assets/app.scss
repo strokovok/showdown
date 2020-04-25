@@ -113,3 +113,10 @@ html {
     text-decoration: none;
     color: $col-text;
 }
+
+.subnav {
+    width: 98.5%;
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+}

@@ -92,19 +92,6 @@
         margin-left: 10px;
         margin-right: 10px;
     }
-
-    .jump-link {
-        text-decoration: none;
-        color: $col-text;
-        &:hover {
-            color: $col-active;
-            transform: scale(1.05);
-        }
-        &:active {
-            transform: scale(0.95);
-        }
-        transition: all .3s ease;
-    }
 </style>
 
 <script>
@@ -113,21 +100,30 @@
     export default {
         props: {
             match: Object,
-            show_game: Boolean,
-            prefer_left: {
-                default: null
-            }
+            show_game: { default: false },
+            prefer_left_bot_id: { default: null },
+            prefer_left_user_id: { default: null }
         },
         computed: {
+            participants() {
+                let first = this.match.participants[0], second = this.match.participants[1];
+
+                if (this.prefer_left_bot_id === null && this.prefer_left_user_id === null)
+                    return [first, second];
+
+                if (this.prefer_left_bot_id !== null && this.prefer_left_bot_id.toString() === first.id.toString())
+                    return [first, second];
+
+                if (this.prefer_left_user_id !== null && this.prefer_left_user_id.toString() === first.owner_id.toString())
+                    return [first, second];
+
+                return [second, first];
+            },
             left() {
-                if (this.prefer_left === null || this.match.participants[0].id === this.prefer_left)
-                    return this.match.participants[0];
-                return this.match.participants[1];
+                return this.participants[0];
             },
             right() {
-                if (this.prefer_left === null || this.match.participants[0].id === this.prefer_left)
-                    return this.match.participants[1];
-                return this.match.participants[0];
+                return this.participants[1];
             }
         },
         components: {

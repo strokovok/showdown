@@ -18,13 +18,6 @@
 </template>
 
 <style lang="scss" scoped>
-    .subnav {
-        width: 98.5%;
-        display: flex;
-        justify-content: flex-end;
-        margin-bottom: 20px;
-    }
-
     .short-info-panel {
         flex-direction: row;
         align-items: center;

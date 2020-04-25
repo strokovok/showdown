@@ -1,6 +1,6 @@
 <template>
     <div class="games">
-        <card-link v-for="game in $store.getters.all_games"
+        <card-link v-for="game in games"
                    img="/game.png"
                    :title="game.name"
                    :to="`/games/${game.id}`"
@@ -30,7 +30,12 @@
 
     export default {
         mounted() {
-            this.$store.dispatch('reload_all_games');
+            this.$store.dispatch('reload_games_list', "");
+        },
+        computed: {
+            games() {
+                return this.$store.getters.get_games_list("") || [];
+            }
         },
         components: {
             CardLink

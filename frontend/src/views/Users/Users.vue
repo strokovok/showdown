@@ -1,6 +1,6 @@
 <template>
     <div class="users">
-        <card-link v-for="user in $store.getters.all_users"
+        <card-link v-for="user in users"
                    img="/user.png"
                    :title="user.login"
                    :to="`/users/${user.id}`"
@@ -30,7 +30,12 @@
 
     export default {
         mounted() {
-            this.$store.dispatch('reload_all_users');
+            this.$store.dispatch('reload_users_list', "");
+        },
+        computed: {
+            users() {
+                return this.$store.getters.get_users_list("") || [];
+            }
         },
         components: {
             CardLink
