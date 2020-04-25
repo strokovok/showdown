@@ -7,8 +7,12 @@
             <router-link to="/users" class="navigation-link-nonexact">Пользователи</router-link>
             <router-link to="/bots" class="navigation-link-nonexact">Боты</router-link>
             <router-link to="/matches" class="navigation-link-nonexact">Матчи</router-link>
-            <router-link to="/profile" class="navigation-link-nonexact">Профиль</router-link>
-            <router-link to="/logout" class="navigation-link-nonexact">Выйти</router-link>
+
+            <router-link to="/register" class="navigation-link-nonexact" v-if="!logged_in">Регистрация</router-link>
+            <router-link to="/login" class="navigation-link-nonexact" v-if="!logged_in">Войти</router-link>
+
+            <router-link :to="profile_link" class="navigation-link" v-if="logged_in">Профиль</router-link>
+            <div class="navigation-link-nonexact" v-if="logged_in" @click="logout">Выйти</div>
 <!--            <div class="navigation-link-nonexact">Язык</div>-->
         </div>
     </div>
@@ -51,6 +55,21 @@
 
 <script>
     export default {
-
+        methods: {
+            logout() {
+                this.$store.dispatch("logout");
+            }
+        },
+        computed: {
+            logged_in() {
+                return this.$store.getters.cur_user !== null;
+            },
+            profile_link() {
+                let cur_user = this.$store.getters.cur_user;
+                if (cur_user === null)
+                    return "/";
+                return `/users/${cur_user.id}`;
+            }
+        }
     }
 </script>

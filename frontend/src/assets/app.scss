@@ -120,3 +120,34 @@ html {
     justify-content: flex-end;
     margin-bottom: 20px;
 }
+
+.oneline-input {
+    background: $col-background;
+    outline: none;
+    padding: 0.4em 0.5em;
+    text-align: center;
+    border: 2px transparentize($col-active, 0.7) solid;
+    color: $col-text;
+    &:focus {
+        border-color: $col-active;
+    }
+    transition: all .3s ease;
+    width: 15em;
+}
+
+.continue-button {
+    margin-top: 30px;
+    padding: 0.4em 0.5em;
+    width: 100%;
+    border: 2px transparentize($col-active, 0.7) solid;
+    background: transparentize($col-active, 0.8);
+    &:hover {
+        background: transparentize($col-active, 0.5);
+    }
+    &:active {
+        transform: scale(0.95);
+    }
+    transition: all .3s ease;
+    cursor: pointer;
+    outline: none;
+}

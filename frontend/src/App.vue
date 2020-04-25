@@ -28,6 +28,9 @@
     import NavBar from '@/components/NavBar.vue';
 
     export default {
+        mounted() {
+            this.$store.dispatch('reload_auth');
+        },
         components: {
             NavBar
         }
