@@ -41,6 +41,8 @@ def get_matches():
     if user_id is not None:
         query = query.filter(Match.participants.any(owner_id=user_id))
 
+    query = query.order_by(Match.id.desc())
+
     return {
         "matches": [match.to_json(game=True, participants={"owner": True}) for match in query.all()]
     }

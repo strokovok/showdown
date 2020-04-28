@@ -33,6 +33,8 @@ def get_bots():
     if match_id is not None:
         query = query.filter(Bot.matches.any(id=match_id))
 
+    query = query.order_by(Bot.rank.desc())
+
     return {
         "bots": [bot.to_json(owner=True, game=True) for bot in query.all()]
     }

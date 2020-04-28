@@ -3,8 +3,20 @@
         <div class="content-panel short-info-panel" v-if="bot !== undefined">
             <img class="bot-logo" src="/bot.png">
             <div class="short-info">
-                <div class="bot-name">{{bot.name}}</div>
-                <div class="bot-short-descr">Здесь будет краткая информация.</div>
+                <div class="info-section">
+                    <div class="bot-name">{{bot.name}}</div>
+                    <div class="bot-short-descr">Здесь будет краткая информация.</div>
+                </div>
+                <div class="info-section-right">
+                    <router-link :to="`/users/${bot.owner.id}`" class="user jump-link">
+                        <div class="user-login">{{bot.owner.login}}</div>
+                        <img class="user-logo" src="/user.png">
+                    </router-link>
+                    <div class="rank">
+                        {{bot.rank}}
+                        <img class="rank-img" src="/rank.png">
+                    </div>
+                </div>
             </div>
         </div>
         <div class="subnav">
@@ -32,9 +44,21 @@
         margin-left: 30px;
         flex-grow: 1;
         display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .info-section {
+        display: flex;
         flex-direction: column;
         align-items: flex-start;
         justify-content: flex-start;
+    }
+
+    .info-section-right {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
     }
 
     .bot-name {
@@ -45,6 +69,34 @@
     .bot-short-descr {
         margin-top: 8px;
         font-size: 18px;
+    }
+
+    .rank {
+        margin-top: 30px;
+        color: $col-active;
+        display: flex;
+        align-items: center;
+    }
+
+    .rank-img {
+        margin-bottom: 0.1em;
+        margin-left: 0.3em;
+        width: 1em;
+    }
+
+    .user {
+        display: flex;
+        align-items: center;
+    }
+
+    .user-logo {
+        width: 30px;
+        height: 30px;
+        margin-left: 10px;
+    }
+
+    .user-login {
+        font-size: 16px;
     }
 </style>
 
