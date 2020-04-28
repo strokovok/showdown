@@ -8,6 +8,7 @@ from flask import session
 
 from .errors import ErrorMessage
 from .getters import get_game
+from .getters import get_match
 from .getters import get_user
 
 
@@ -63,7 +64,7 @@ def require_game_management():
     req = get_json_request(schema)
     game_id, token = req["game"]["id"], req["game"]["manager_token"]
 
-    game = get_game(id=id)
+    game = get_game(id=game_id)
     if not game.check_manager_token(token):
         ErrorMessage.INCORRECT_MANAGER_TOKEN.abort()
 

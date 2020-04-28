@@ -113,8 +113,7 @@ def finish_match(id):
                     "properties": {
                         "id": {"type": "integer"},
                         "score": {
-                            "type": "number",
-                            "minumum": 0
+                            "type": "number"
                         }
                     },
                     "required": ["id", "score"]
@@ -140,13 +139,13 @@ def finish_match(id):
     for bot in match.participants:
         bot.rank = bot.rank + results[bot.id]
 
-    match.results = {
+    match.results = json.dumps({
         "game_results": results,
         "rerank": results
-    }
+    })
     # TEMPORARY RANKING
 
-    match.data = data
+    match.data = json.dumps(data)
 
     match.state = MatchState.FINISHED
     match.end_time = datetime.now()

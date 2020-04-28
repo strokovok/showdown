@@ -1,3 +1,4 @@
+import json
 import os
 import shutil
 import time
@@ -19,21 +20,26 @@ weights[3] = [0, 100, 10000]
 weights[4] = [0, 100000, 1000000]
 
 
-def run():
+def run(ids):
 
-    shutil.rmtree("logs")
-    os.mkdir("logs")
+#     shutil.rmtree("logs")
+#     os.mkdir("logs")
     gs = GameState(X_LEN, Y_LEN, WIN_LEN)
 
     bots = [
         BotAttacker(gs, 'x', weights),
         BotAttacker(gs, 'o', weights)
     ]
+    game_log = []
 
     cur = 0
     cnt = 1
     while True:
         move = bots[cur].make_move(log=None)
+        game_log.append({
+            "bot_id": ids[cur],
+            "move": move
+        })
         res = gs.set(move[0], move[1], bots[cur].c)
 
         print("\n" * 3)
@@ -49,13 +55,39 @@ def run():
 
         if res == True:
             print(bots[cur].c + " wins!")
-            break
+            return {
+                "data": {
+                    "game_log": game_log,
+                },
+                "results": [
+                    {
+                        "id": ids[cur],
+                        "score": 1,
+                    },
+                    {
+                        "id": ids[1 - cur],
+                        "score": -1,
+                    }
+                ]
+            }
         if res == None:
             print("Tie!")
-            break
+            return {
+                "data": {
+                    "game_log": game_log,
+                },
+                "results": [
+                    {
+                        "id": ids[cur],
+                        "score": 0,
+                    },
+                    {
+                        "id": ids[1 - cur],
+                        "score": 0,
+                    }
+                ]
+            }
         cur = 1 - cur
         cnt += 1
 #         time.sleep(0.2)
 
-
-run()
