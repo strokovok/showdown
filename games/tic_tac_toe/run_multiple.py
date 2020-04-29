@@ -38,9 +38,7 @@ def run_multiple():
         res = run(ids)
 
         # Finish match
-        print(json.dumps(res, indent=4))
         answer = send_request(f"{match_id}/finish", res)
-        print(answer)
 
 #         res = run(ids)
 #         add_game_management(res)

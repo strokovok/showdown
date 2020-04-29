@@ -34,7 +34,7 @@ export default new Vuex.Store({
         get_bot: state => id => state.bots[id],
 
         get_matches_list: state => query => state.matches_lists[query],
-        get_match: state => id => state.match[id],
+        get_match: state => id => state.matches[id],
 
         cur_user: state => state.cur_user,
     },

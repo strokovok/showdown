@@ -72,6 +72,7 @@ export default new Router({
                 show_game: true
             }
         },
+        { path: '/matches/:match_id', component: () => import('./views/Matches/Match.vue') },
 
         { path: '/register', component: () => import('./views/Register.vue')},
         { path: '/login', component: () => import('./views/Login.vue')},

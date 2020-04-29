@@ -52,7 +52,7 @@ class BotAttacker:
             for ey in range(self.gs.y_len):
                 if self.gs.get(ex, ey) != None or (ex == x and ey == y):
                     continue
-                if random.randint(1, 100) < 50:
+                if random.randint(1, 100) < 5:
                     continue
 
                 if self.log_file:
