@@ -22,6 +22,7 @@
         <div class="subnav">
             <router-link :to="`/bots/${bot_id}/`" class="navigation-link-exact">Детали</router-link>
             <router-link :to="`/bots/${bot_id}/matches`" class="navigation-link-exact">Матчи</router-link>
+            <router-link :to="`/bots/${bot_id}/access`" class="navigation-link-exact" v-if="is_your_bot">Доступ</router-link>
         </div>
         <router-view/>
     </div>
@@ -111,6 +112,12 @@
             },
             bot() {
                 return this.$store.getters.get_bot(this.bot_id);
+            },
+            is_your_bot() {
+                let user = this.$store.getters.cur_user;
+                if (user === null || this.bot === undefined)
+                    return false;
+                return user.id === this.bot.owner_id;
             }
         }
     }

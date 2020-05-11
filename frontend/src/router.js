@@ -63,7 +63,8 @@ export default new Router({
                         prefer_left_bot_id: route.params.bot_id,
                         query: `?bot_id=${route.params.bot_id}`
                     })
-                }
+                },
+                { path: "access", component: () => import('./views/Bots/BotAccess.vue') },
             ]
         },
 
