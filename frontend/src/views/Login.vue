@@ -66,7 +66,7 @@
                     this.form_error = "Длина логина должна быть от 1 до 30";
                     return;
                 }
-                if (this.password.length < 1 || this.password.length > 30) {
+                if (this.password.length < 1 || this.password.length > 100) {
                     this.form_error = "Длина пароля должна быть от 1 до 100";
                     return;
                 }
