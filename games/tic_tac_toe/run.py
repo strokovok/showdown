@@ -66,7 +66,7 @@ def run(ids):
                     },
                     {
                         "id": ids[1 - cur],
-                        "score": -1,
+                        "score": 0,
                     }
                 ]
             }
@@ -79,11 +79,11 @@ def run(ids):
                 "results": [
                     {
                         "id": ids[cur],
-                        "score": 0,
+                        "score": 0.5,
                     },
                     {
                         "id": ids[1 - cur],
-                        "score": 0,
+                        "score": 0.5,
                     }
                 ]
             }

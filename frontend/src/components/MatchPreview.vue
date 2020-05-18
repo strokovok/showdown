@@ -17,8 +17,8 @@
                 </router-link>
             </div>
             <div class="middle-info">
-                <div class="match-result" :class="left_result_class" v-if="left_result !== undefined">
-                    {{left_result_formatted}}
+                <div class="match-result" :class="left_rerank_class" v-if="left_rerank !== undefined">
+                    {{left_rerank}}
                 </div>
                 <div class="match-info">
                     <router-link :to="`/matches/${match.id}`" class="jump-link">
@@ -26,8 +26,8 @@
                     </router-link>
                     <div class="match-state" :class="state_class">{{match_state}}</div>
                 </div>
-                <div class="match-result" :class="right_result_class" v-if="left_result !== undefined">
-                    {{right_result_formatted}}
+                <div class="match-result" :class="right_rerank_class" v-if="right_rerank !== undefined">
+                    {{right_rerank}}
                 </div>
             </div>
             <div class="participant participant-right">
@@ -155,6 +155,26 @@
             prefer_left_bot_id: { default: null },
             prefer_left_user_id: { default: null }
         },
+        methods: {
+            format_rerank(id) {
+                let res = this.rerank[id];
+                if (res === undefined)
+                    return undefined;
+                res = res.toFixed(0);
+                if (res >= 0)
+                    res = `+${res}`;
+                return res;
+            },
+            get_rerank_class(id) {
+                let res = this.rerank[id];
+                if (res === undefined)
+                    return "";
+                if (res > 0)
+                    return "positive";
+                if (res < 0)
+                    return "negative";
+            }
+        },
         computed: {
             participants() {
                 let first = this.match.participants[0], second = this.match.participants[1];
@@ -176,50 +196,20 @@
             right() {
                 return this.participants[1];
             },
-            results() {
-                if (this.match.results.game_results === undefined)
-                    return {};
-                return this.match.results.game_results;
+            rerank() {
+                return this.match.results.rerank || {}
             },
-            left_result() {
-                return this.results[this.left.id];
+            left_rerank() {
+                return this.format_rerank(this.left.id);
             },
-            left_result_formatted() {
-                let res = this.left_result;
-                if (res === undefined)
-                    return "";
-                if (res > 0)
-                    res = `+${res}`;
-                return res;
+            left_rerank_class() {
+                return this.get_rerank_class(this.left.id);
             },
-            right_result_formatted() {
-                let res = this.right_result;
-                if (res === undefined)
-                    return "";
-                if (res > 0)
-                    res = `+${res}`;
-                return res;
+            right_rerank() {
+                return this.format_rerank(this.right.id);
             },
-            right_result() {
-                return this.results[this.right.id];
-            },
-            left_result_class() {
-                let res = this.left_result;
-                if (res === undefined)
-                    return "";
-                if (res > 0)
-                    return "positive";
-                if (res < 0)
-                    return "negative";
-            },
-            right_result_class() {
-                let res = this.right_result;
-                if (res === undefined)
-                    return "";
-                if (res > 0)
-                    return "positive";
-                if (res < 0)
-                    return "negative";
+            right_rerank_class() {
+                return this.get_rerank_class(this.right.id);
             },
             match_state() {
                 let states = [
@@ -229,7 +219,14 @@
                     "ЗАВЕРШЕН",
                     "ОТМЕНЕН"
                 ];
-                return states[this.match.state];
+                let res = states[this.match.state];
+                let game_results = this.match.results.game_results;
+                if (game_results !== undefined) {
+                    let ls = game_results[this.left.id];
+                    let rs = game_results[this.right.id];
+                    res += ` (${ls} : ${rs})`;
+                }
+                return res;
             },
             state_class() {
                 let states = [

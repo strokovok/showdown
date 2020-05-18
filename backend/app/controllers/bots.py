@@ -12,6 +12,7 @@ from .utils.helpers import generate_token
 from .utils.helpers import get_json_request
 from .utils.helpers import require_game_management
 from .utils.helpers import require_login
+from .utils.rank_system import DEFAULT_RANK
 
 
 bp = Blueprint("bots", __name__, url_prefix="/api/bots")
@@ -67,7 +68,7 @@ def create_bot():
     game = get_game(id=game_id)
 
     token = generate_token()
-    bot = Bot(name=name, rank=0, owner=cur_user(), game=game, access_token=token)
+    bot = Bot(name=name, rank=DEFAULT_RANK, owner=cur_user(), game=game, access_token=token)
     db.session.add(bot)
     db.session.commit()
 

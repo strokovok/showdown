@@ -4,6 +4,7 @@ import random
 from flask.cli import with_appcontext
 from flask_sqlalchemy import SQLAlchemy
 
+from .controllers.utils.rank_system import DEFAULT_RANK
 from .database import db
 from .models import User, Game, Bot, Match, MatchState
 
@@ -55,7 +56,7 @@ def fill_db():
         user = User(login=login, password='password')
         db.session.add(user)
         for bot_name in bot_names:
-            bot = Bot(name=bot_name, rank=0, owner=user, game=game, access_token='password')
+            bot = Bot(name=bot_name, rank=DEFAULT_RANK, owner=user, game=game, access_token='password')
             db.session.add(bot)
     db.session.commit()
 

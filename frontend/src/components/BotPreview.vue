@@ -16,7 +16,7 @@
                 <div class="bot-name">{{bot.name}}</div>
             </div>
             <div class="rank">
-                {{bot.rank}}
+                {{bot.rank.toFixed(0)}}
                 <img class="rank-img" src="/rank.png">
             </div>
         </router-link>

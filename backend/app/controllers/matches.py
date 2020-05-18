@@ -15,6 +15,7 @@ from .utils.getters import get_match
 from .utils.helpers import get_json_request
 from .utils.helpers import require_game_management
 from .utils.helpers import require_match_management
+from .utils.rank_system import count_ranks_change
 
 
 bp = Blueprint("Matches", __name__, url_prefix="/api/matches")
@@ -115,7 +116,8 @@ def finish_match(id):
                     "properties": {
                         "id": {"type": "integer"},
                         "score": {
-                            "type": "number"
+                            "type": "number",
+                            "minimum": 0
                         }
                     },
                     "required": ["id", "score"]
@@ -137,15 +139,20 @@ def finish_match(id):
     for bot_id in (participants_ids - results_ids):
         ErrorMessage.MISSING_RESULT.abort(match_id=id, bot_id=bot_id)
 
-    # TEMPORARY RANKING
+    # RANKING
+    ranks = {
+        bot.id: bot.rank for bot in match.participants
+    }
+    ranks_change = count_ranks_change(ranks, results)
+
     for bot in match.participants:
-        bot.rank = bot.rank + results[bot.id]
+        bot.rank = bot.rank + ranks_change[bot.id]
 
     match.results = json.dumps({
         "game_results": results,
-        "rerank": results
+        "rerank": ranks_change
     })
-    # TEMPORARY RANKING
+    # RANKING
 
     match.data = json.dumps(data)
 
