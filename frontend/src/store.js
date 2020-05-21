@@ -111,6 +111,17 @@ export default new Vuex.Store({
             axios.get('/api/auth/logout').then(response => {
                 context.commit("set_cur_user", null);
             }).catch(err => console.log(err.response));
-        }
+        },
+
+        update_bot(context, { id, data }) {
+            axios.post(`/api/bots/${id}/update`, data).then(response => {
+                context.commit('set_bot', { 'id': id, bot: response.data });
+            }).catch(err => console.log(err.response));
+        },
+        update_user(context, { id, data }) {
+            axios.post(`/api/users/update`, data).then(response => {
+                context.commit('set_user', { 'id': id, user: response.data });
+            }).catch(err => console.log(err.response));
+        },
     }
 })

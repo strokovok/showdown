@@ -15,7 +15,8 @@ def gen_json(obj, fields=None, rels=None, list_rels=None):
         for field in fields:
             name, f = field if isinstance(field, tuple) else (field, lambda x: x)
             if f is not None:
-                res[name] = f(getattr(obj, name))
+                val = getattr(obj, name)
+                res[name] = val if f == True else f(val)
     if rels is not None:
         for name, opts in rels.items():
             if opts is not None:
@@ -33,6 +34,8 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     login = db.Column(db.String, unique=True, nullable=False)
     reg_time = db.Column(db.DateTime, nullable=False, server_default=db.func.current_timestamp())
+    description = db.Column(db.String, nullable=False, server_default="")
+    detailed_description = db.Column(db.String, nullable=False, server_default="")
     _password = db.Column('password', db.String, nullable=False)
 
     @hybrid_property
@@ -46,9 +49,15 @@ class User(db.Model):
     def check_password(self, value):
         return check_password_hash(self.password, value)
 
-    def to_json(self, bots=None):
+    def to_json(self, bots=None, description=None, detailed_description=None):
         return gen_json(self,
-            fields=["id", "login", ("reg_time", str)],
+            fields=[
+                "id",
+                "login",
+                ("reg_time", str),
+                ("description", description),
+                ("detailed_description", detailed_description)
+            ],
             list_rels={"bots": bots}
         )
 
@@ -56,6 +65,8 @@ class User(db.Model):
 class Game(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, unique=True, nullable=False)
+    description = db.Column(db.String, nullable=False, server_default="")
+    detailed_description = db.Column(db.String, nullable=False, server_default="")
     _manager_token = db.Column('manager_token', db.String, nullable=False)
 
     @hybrid_property
@@ -69,9 +80,14 @@ class Game(db.Model):
     def check_manager_token(self, value):
         return check_password_hash(self.manager_token, value)
 
-    def to_json(self, bots=None, matches=None):
+    def to_json(self, bots=None, matches=None, description=None, detailed_description=None):
         return gen_json(self,
-            fields=["id", "name"],
+            fields=[
+                "id",
+                "name",
+                ("description", description),
+                ("detailed_description", detailed_description)
+            ],
             list_rels={"bots": bots, "matches": matches}
         )
 
@@ -80,6 +96,8 @@ class Bot(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, unique=True, nullable=False)
     creation_time = db.Column(db.DateTime, nullable=False, server_default=db.func.current_timestamp())
+    description = db.Column(db.String, nullable=False, server_default="")
+    detailed_description = db.Column(db.String, nullable=False, server_default="")
     rank = db.Column(db.Float, nullable=False)
 
     owner_id = db.Column(db.ForeignKey(User.id), nullable=False)
@@ -101,9 +119,18 @@ class Bot(db.Model):
     def check_access_token(self, value):
         return check_password_hash(self.access_token, value)
 
-    def to_json(self, owner=None, game=None, matches=None):
+    def to_json(self, owner=None, game=None, matches=None, description=None, detailed_description=None):
         return gen_json(self,
-            fields=["id", "name", ("creation_time", str), "rank", "owner_id", "game_id"],
+            fields=[
+                "id",
+                "name",
+                ("creation_time", str),
+                "rank",
+                "owner_id",
+                "game_id",
+                ("description", description),
+                ("detailed_description", detailed_description)
+            ],
             rels={"owner": owner, "game": game},
             list_rels={"matches": matches}
         )

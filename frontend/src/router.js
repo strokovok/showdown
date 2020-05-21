@@ -13,7 +13,7 @@ export default new Router({
         { path: '/games', component: () => import('./views/Games/Games.vue') },
         { path: '/games/:game_id', component: () => import('./views/Games/Game.vue'),
             children: [
-                { path: "/", component: () => import('./views/DetailedDescription.vue') },
+                { path: "/", component: () => import('./views/Games/GameDetailedDescription.vue') },
                 { path: "bots", component: () => import('./views/Bots/BotsList.vue'),
                     props: (route) => ({
                         show_user: true,
@@ -32,7 +32,7 @@ export default new Router({
         { path: '/users', component: () => import('./views/Users/Users.vue') },
         { path: '/users/:user_id', component: () => import('./views/Users/User.vue'),
             children: [
-                { path: "/", component: () => import('./views/DetailedDescription.vue') },
+                { path: "/", component: () => import('./views/Users/UserDetailedDescription.vue') },
                 { path: "bots", component: () => import('./views/Bots/BotsList.vue'),
                     props: (route) => ({
                         show_game: true,
@@ -57,7 +57,7 @@ export default new Router({
         },
         { path: '/bots/:bot_id', component: () => import('./views/Bots/Bot.vue'),
             children: [
-                { path: "/", component: () => import('./views/DetailedDescription.vue') },
+                { path: "/", component: () => import('./views/Bots/BotDetailedDescription.vue') },
                 { path: "matches", component: () => import('./views/Matches/MatchesList.vue'),
                     props: (route) => ({
                         prefer_left_bot_id: route.params.bot_id,

@@ -43,7 +43,7 @@ def get_bots():
 
 @bp.route("/<int:id>", methods=["GET"])
 def get_bot_route(id):
-    return get_bot(id=id).to_json(owner=True, game=True)
+    return get_bot(id=id).to_json(owner=True, game=True, description=True, detailed_description=True)
 
 
 @bp.route("/create", methods=["POST"])
@@ -118,3 +118,27 @@ def authorize_bot(id):
         "success": bot.check_access_token(token),
         "bot": bot.to_json(owner=True)
     }
+
+
+@bp.route("/<int:id>/update", methods=["POST"])
+def update_bot(id):
+    require_login()
+    bot = get_bot(id=id)
+
+    if bot.owner_id != cur_user().id:
+        ErrorMessage.NOT_YOUR_BOT.abort(id=id)
+
+    schema = {
+        "type": "object",
+        "properties": {
+            "description": {"type": "string", "maxLength": 50},
+            "detailed_description": {"type": "string"},
+        }
+    }
+    req = get_json_request(schema)
+
+    bot.description = req.get('description', bot.description)
+    bot.detailed_description = req.get('detailed_description', bot.detailed_description)
+    db.session.commit()
+
+    return bot.to_json(owner=True, game=True, description=True, detailed_description=True)

@@ -150,4 +150,9 @@ html {
     transition: all .3s ease;
     cursor: pointer;
     outline: none;
+    color: $col-text;
+}
+
+code {
+    font-size: 0.88em !important;
 }
