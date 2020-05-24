@@ -20,7 +20,7 @@ def count_bets(ranks):
     for x in ranks:
         op_av = (s - x) / (n - 1)
         ratio = max(min(x / op_av, SUPER_RATIO), WEAK_RATIO)
-        part = MAX_DELTA_PART * (SUPER_RATIO - ratio) / (SUPER_RATIO - WEAK_RATIO)
+        part = MAX_DELTA_PART * (ratio - WEAK_RATIO) / (SUPER_RATIO - WEAK_RATIO)
         bets.append(part * x)
     return bets
 
