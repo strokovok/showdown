@@ -55,6 +55,7 @@
         color: $col-text;
         margin-left: 10px;
         margin-right: 10px;
+        user-select: none;
     }
 </style>
 

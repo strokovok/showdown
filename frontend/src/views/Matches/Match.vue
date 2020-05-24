@@ -2,23 +2,25 @@
     <div class="content-panel-container">
         <div class="content-panel-container" v-if="match !== undefined">
             <MatchPreview :match="match" :show_game="true"/>
-            <div class="content-panel bg-colorized">
-                <div class="game-info">
-                    <div class="game-info-part x">
-                        <div class="marker">X</div> - {{match.participants[0].name}}
-                    </div>
-                    <div class="game-info-part zero">
-                        <div class="marker">O</div> - {{match.participants[1].name}}
-                    </div>
-                </div>
-                <div class="game-board">
-                    <div class="game-board-row" v-for="row in this.field">
-                        <div class="game-board-cell"
-                             v-for="cell in row"
-                             :class="cell === '' ? 'empty-cell' : (cell === 'X' ? 'x' : 'zero')">
-                            {{cell}}
+            <div class="content-panel" v-if="game_log !== undefined">
+                <div class="vis-container">
+                    <transition-group name="game-log" class="game-log" tag="div">
+                        <div class="game-log-item" v-for="i in (cur_frame + 1)" :key="i">
+                            {{game_log[i - 1]}}
                         </div>
-                    </div>
+                    </transition-group>
+                    <tic-tac-toe :game_log="game_log" :match="match" :cur_frame="cur_frame"/>
+                </div>
+                <div class="controls">
+                    <div class="con-button" @click="on_play">Играть</div>
+                    <div class="con-button" @click="on_stop">Стоп</div>
+                    <input type="range"
+                           min="0" max="100"
+                           step="0.0000001"
+                           v-model="progress"
+                           class="progress-slider"
+                           @mousedown="slider_mouse_down = true"
+                           @mouseup="slider_mouse_down = false">
                 </div>
             </div>
         </div>
@@ -26,113 +28,144 @@
 </template>
 
 <style lang="scss" scoped>
-    @import url('https://fonts.googleapis.com/css?family=Permanent+Marker&display=swap');
-
-    $cl-bg: #554e6e;
-    $cl-zero: #ff6dbe;
-    $cl-x: #4cdeff;
-
-    .x {
-        color: $cl-x;
-    }
-
-    .zero {
-        color: $cl-zero;
-    }
-
-    .bg-colorized {
-        background: $cl-bg;
-    }
-
-    .game-info {
-        margin-bottom: 10px;
-        width: 400px;
-        display: flex;
-        justify-content: space-between;
-    }
-
-    .game-info-part {
-        display: flex;
-        align-items: center;
-        margin-left: 10px;
-        margin-right: 10px;
-    }
-
-    .marker {
-        font-family: 'Permanent Marker', cursive;
-    }
-
-    .game-board {
-        width: 400px;
-        height: 400px;
-        display: flex;
-        flex-direction: column;
-        border-top: 3px white solid;
-        border-left: 3px white solid;
-        background: $cl-bg;
-        font-family: 'Permanent Marker', cursive;
-    }
-
-    .game-board-row {
-        display: flex;
+    .controls {
+        margin-top: 30px;
         width: 100%;
-        height: 10%;
-        border-bottom: 2px white solid;
-    }
-
-    .game-board-cell {
-        width: 10%;
-        height: 100%;
         display: flex;
         align-items: center;
         justify-content: center;
-        border-right: 3px white solid;
-        user-select: none;
-        font-size: 30px;
-        transition: all .3s ease;
-        overflow: hidden;
     }
 
-    .empty-cell {
-        font-size: 50px;
+    .con-button {
+        padding: 0.4em 0.5em;
+        border: 2px transparentize($col-active, 0.7) solid;
+        background: transparentize($col-active, 0.8);
+        &:hover {
+            background: transparentize($col-active, 0.5);
+        }
+        &:active {
+            transform: scale(0.95);
+        }
+        transition: all .3s ease;
+        cursor: pointer;
+        outline: none;
+        color: $col-text;
+        margin-right: 30px;
+        user-select: none;
+    }
+
+    .progress-slider {
+        width: 580px;
+        -webkit-appearance: none;
+        appearance: none;
+        height: 25px;
+        background: transparentize($col-active, 0.6);
+        outline: none;
+        opacity: 0.7;
+        -webkit-transition: .2s;
+        transition: opacity .2s;
+        &:hover {
+            opacity: 1;
+        }
+    }
+
+    .progress-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 25px;
+        height: 25px;
+        background: $col-active;
+        cursor: pointer;
+    }
+
+    .progress-slider::-moz-range-thumb {
+        width: 25px;
+        height: 25px;
+        background: $col-active;
+        cursor: pointer;
+    }
+
+    .vis-container {
+        display: flex;
+    }
+
+    .game-log {
+        margin-right: 50px;
+        width: 300px;
+        height: 500px;
+        overflow-y: scroll;
+        background: $col-background;
+        border: 1px transparentize($col-text, 0.5) solid;
+        overflow-x: hidden;
+    }
+
+    .game-log-item {
+        width: 100%;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-bottom: 1px transparentize($col-text, 0.5) solid;
+        box-sizing: border-box;
+
+        transition: all .3s;
+        margin-right: 10px;
+    }
+    .game-log-enter, .game-log-leave-to {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    .game-log-leave-active {
+        opacity: 0;
     }
 </style>
 
 <script>
     import MatchPreview from "@/components/MatchPreview";
+    import TicTacToe from "@/components/Games/TicTacToe";
 
-    const X_LEN = 10;
-    const Y_LEN = 10;
+    const STEP_SPEED = 0.1;
 
     export default {
         data() {
             return {
-                field: [],
-                cur: 0,
+                cur_frame: -1,
+                progress: 0,
+                slider_mouse_down: false,
+                play: true,
             }
         },
         mounted() {
             this.$store.dispatch('reload_match', this.match_id);
-            for (let y = 0; y < Y_LEN; ++y) {
-                let r = [];
-                for (let x = 0; x < X_LEN; ++x) {
-                    r.push('');
-                }
-                this.field.push(r);
-            }
-            setInterval(this.do_next, 300);
+            setInterval(this.update_progress, 50);
         },
         methods: {
-            do_next() {
-                if (this.cur === this.game_log.length)
+            on_play() {
+                this.play = true;
+                if (this.progress >= 100) {
+                    this.progress = 0;
+                }
+            },
+            on_stop() {
+                this.play = false;
+            },
+            update_progress() {
+                if (this.game_log === undefined)
                     return;
-                let move = this.game_log[this.cur++];
-                let x = move.move[0], y = move.move[1];
-                let id = move.bot_id;
-                let c = 'X';
-                if (id === this.match.participants[1].id)
-                    c = 'O';
-                this.$set(this.field[y], x, c);
+                this.progress = parseFloat(this.progress);
+                if (!this.slider_mouse_down && this.play) {
+                    let delta = (100 / this.game_log.length) * STEP_SPEED;
+                    this.progress += delta;
+                    this.progress = Math.min(this.progress, 100);
+                }
+                let next_frame = Math.floor((this.progress / 100) * this.game_log.length) - 1;
+                if (next_frame !== this.cur_frame) {
+                    this.cur_frame = next_frame;
+                    this.$nextTick(() => {
+                        let el = document.getElementsByClassName("game-log")[0];
+                        el.scrollTop = el.scrollHeight;
+                    })
+                }
             }
         },
         computed: {
@@ -145,11 +178,12 @@
             game_log() {
                 if (this.match !== undefined)
                     return this.match.data.game_log;
-                return [];
+                return undefined;
             }
         },
         components: {
-            MatchPreview
+            MatchPreview,
+            TicTacToe
         }
     }
 </script>
