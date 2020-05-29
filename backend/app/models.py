@@ -35,7 +35,7 @@ class User(db.Model):
     login = db.Column(db.String, unique=True, nullable=False)
     reg_time = db.Column(db.DateTime, nullable=False, server_default=db.func.current_timestamp())
     description = db.Column(db.String, nullable=False, server_default="")
-    detailed_description = db.Column(db.String, nullable=False, server_default="")
+    detailed_description = db.Column(db.String, nullable=False, server_default="Здесь будет произвольная детальная информация о пользователе.")
     _password = db.Column('password', db.String, nullable=False)
 
     @hybrid_property
@@ -66,7 +66,7 @@ class Game(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, unique=True, nullable=False)
     description = db.Column(db.String, nullable=False, server_default="")
-    detailed_description = db.Column(db.String, nullable=False, server_default="")
+    detailed_description = db.Column(db.String, nullable=False, server_default="Здесь будет детальная информация об игре.")
     _manager_token = db.Column('manager_token', db.String, nullable=False)
 
     @hybrid_property
@@ -97,7 +97,7 @@ class Bot(db.Model):
     name = db.Column(db.String, unique=True, nullable=False)
     creation_time = db.Column(db.DateTime, nullable=False, server_default=db.func.current_timestamp())
     description = db.Column(db.String, nullable=False, server_default="")
-    detailed_description = db.Column(db.String, nullable=False, server_default="")
+    detailed_description = db.Column(db.String, nullable=False, server_default="Здесь будет произвольная детальная информация о боте.")
     rank = db.Column(db.Float, nullable=False)
 
     owner_id = db.Column(db.ForeignKey(User.id), nullable=False)
