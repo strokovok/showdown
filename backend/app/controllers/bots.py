@@ -111,7 +111,7 @@ def authorize_bot(id):
     token = req["access_token"]
 
     bot = get_bot(id=id)
-    if bot.game_id != game_id:
+    if bot.game_id != game.id:
         ErrorMessage.WRONG_BOT_GAME.abort(bot_id=bot.id, game_id=game.id)
 
     return {
