@@ -25,6 +25,9 @@ def create_app():
     from . import fill_db
     fill_db.init_app(app)
 
+    from . import ttt_desc
+    ttt_desc.init_app(app)
+
     from .controllers import auth, users, games, bots, matches, avatars
     app.register_blueprint(auth.bp)
     app.register_blueprint(users.bp)
